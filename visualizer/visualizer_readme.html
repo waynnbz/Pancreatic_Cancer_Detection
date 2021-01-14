@@ -1,0 +1,49 @@
+<h1>Pancreatic Cancer Detector Visualizer and Offline Tester</h1>
+
+The purpose of the visualizer application is to let you view 16 bit PNG CT scan images, view ground truth tumor and vessel contours and your solution's contours as overlays on these images, compare truth to solution and calculate your solution's score.<br/>
+
+Open a command window in the directory where you unzipped the package and execute
+<pre>
+java -jar visualizer.jar -data-dir &lt;data_directory_path&gt; -solution &lt;solution_file&gt;
+</pre>
+
+This assumes that you have Java (at least v1.7) installed and it is available on your path. The meaning of the above parameters are the following:
+<ul>
+	<li>-data-dir specifies the location of the directory containing scans, e.g. where you unpacked the training or testing data, e.g. <tt>/home/contest/data/sample/</tt></li>
+	<li>-solution specifies your solution file, e.g. <tt>/home/contest/data/sample/solution.csv</tt>. This parameter is optional.</li>
+</ul>
+File and directory parameters can be relative or absolute paths.<br/>
+
+There are some other optional command line parameters you can use:
+<ul>
+	<li>-no-gui: if present then no GUI will be shown, the application just scores the supplied solution file in command line mode.</li>
+	<li>-lo-gray: An integer value in the [0...65535] range that specifies the lower gray threshold for viewing 16 bit PNG images. All values lower than that will be shown in black. Defaults to 100.</li>
+	<li>-hi-gray: An integer value in the [0...65535] range that specifies the higher gray threshold for viewing 16 bit PNG images. All values higher than that will be shown in white. Defaults to 11000.</li>
+	<li>-meta-out: Path to a file where the tool outputs all meta data about the current set of scans, including contours and seed points. Starting the tool next time using this file will be much faster than having the tool parse the scan folders for meta data.</li>
+	<li>-meta-in: Path to a file (previously saved with the -meta-out option) containing meta data for a set of scans.</li>
+</ul>
+<br/>
+Examples:
+<pre>
+java -jar visualizer.jar -data-dir ./sample/ -solution ./sample/solution.csv -meta-out sample-meta.txt
+</pre>
+opens the sample scan set found at <tt>./sample</tt>, scores it against the given solution file, and outputs meta data information to <tt>sample-meta.txt</tt>.
+<br/>
+<pre>
+java -jar visualizer.jar -data-dir ./sample/ -solution ./sample/solution.csv -meta-in sample-meta.txt
+</pre>
+opens the same set of scans, but uses the previously saved <tt>sample-meta.txt</tt> file for meta data information. For large scan sets (e.g. in case of the whole training set) the startup time of the tool is significantly shorter using a separate meta data file.
+
+<h3>Operations</h3>
+When the tool starts it loads meta data of all scans found in the specified data directory (or from a given meta data file). If a solution file is also given then it calculates and displays scores for each slice image (that has either ground truth tumor contours, or contours extracted by your solution, or both), and also displays an overall score. TP, FP and FN numbers shown per slice are only for tumors, vessel scores are not shown. Then the tool displays the first image of the first scan. The display shows 4 subviews: 
+<ul>
+	<li>the current x-y cross section (slice) of the scan in the top left,</li>
+	<li>the current x-z cross section of the scan in the top right,</li>
+	<li>the current y-z cross section of the scan in the middle right,</li>
+	<li>and a zoomed version of the current slice in the bottom.</li>
+</ul>
+To navigate to a different scan use the scan selector combo box. To navigate to a different slice within the current scan use the mouse wheel when the mouse pointer is within the displayed image, or click anywhere within the x-z or y-z cross sections. Clicking within the x-y slice changes the current position in the other two cross sections. This way you can navigate the body in 3D.<br/>
+An additional way to navigate to a different scan or image is to click within the output log area. Clicking on a line that displays a scan ID will load that scan and display its first slice, clicking on a line that shows scores for a given slice (such lines start with #&lt;slice_id&gt;:) will load that slice within the correct scan.<br/>
+Use the two Gray level sliders to guess what. Similar documentation applies to the zoom selector dropdown box and some other controls.<br/>
+<br/>
+Have fun with the tool! Use the contest forum for questions and feedback.

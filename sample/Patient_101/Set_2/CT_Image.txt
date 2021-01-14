@@ -1,0 +1,2 @@
+ImageSize = 512 512 270
+PixelSpacing = 0.4296875 0.4296875 0.7
